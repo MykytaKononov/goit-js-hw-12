@@ -12,22 +12,14 @@ export function displayImages(images) {
     return;
   }
 
-  images.forEach(image => {
-    const imagecard = document.createElement('div');
-    imagecard.classList.add('image-card');
-
-    const a = document.createElement('a');
-    a.href = image.largeImageURL;
-    a.classList.add('image-link');
-
-    const img = document.createElement('img');
-    img.src = image.webformatURL;
-    img.alt = image.tags;
-    img.classList.add('image');
-
-    const info = document.createElement('div');
-    info.classList.add('image-info');
-    info.innerHTML = `
+  const prefab = images
+    .map(
+      image => `
+    <div class="image-card">
+      <a href="${image.largeImageURL}" class="image-link">
+        <img src="${image.webformatURL}" alt="${image.tags}" class="image" />
+      </a>
+      <div class="image-info">
         <p class="image-likes text">Likes</p>
         <p class="image-views text">Views</p>
         <p class="image-downloads text">Downloads</p>
@@ -36,11 +28,11 @@ export function displayImages(images) {
         <p class="number">${image.views}</p>
         <p class="number">${image.downloads}</p>
         <p class="number">${image.comments}</p>
-        `;
+      </div>
+    </div>
+  `
+    )
+    .join('');
 
-    a.appendChild(img);
-    imagecard.appendChild(a);
-    imagecard.appendChild(info);
-    gallery.appendChild(imagecard);
-  });
+  gallery.insertAdjacentHTML('beforeend', prefab);
 }

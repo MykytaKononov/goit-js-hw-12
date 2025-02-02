@@ -7,13 +7,13 @@ let page = 1;
 export async function searchImages(searchrequest) {
   const URL = `https://pixabay.com/api/`;
   try {
-    if (page > 10) {
-      iziToast.warning({
-        title: 'Warning',
-        message: 'You have reached the last page!',
+    if (!searchrequest) {
+      iziToast.error({
+        title: 'Error',
+        message: 'Please enter search request!',
         position: 'topRight',
       });
-      return [];
+      return;
     }
     const response = await axios.get(URL, {
       params: {
@@ -26,7 +26,7 @@ export async function searchImages(searchrequest) {
         page: page,
       },
     });
-
+    page += 1;
     return response.data.hits;
   } catch (error) {
     console.error('REQUEST ERROR', error);
@@ -35,11 +35,18 @@ export async function searchImages(searchrequest) {
       message: 'Failed to fetch images. Please try again!',
       position: 'topRight',
     });
+    return [];
   }
 }
+
 export function resetPage() {
   page = 1;
 }
+
 export function plusPage() {
   page += 1;
+}
+
+export function getPage() {
+  return page;
 }
