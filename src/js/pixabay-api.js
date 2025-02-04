@@ -3,18 +3,11 @@ import iziToast from 'izitoast';
 
 const API_KEY = '48551671-8e0bd0e05b8a9090cbea8e4d9';
 let page = 1;
+const maxpages = 10;
 
 export async function searchImages(searchrequest) {
   const URL = `https://pixabay.com/api/`;
   try {
-    if (!searchrequest) {
-      iziToast.error({
-        title: 'Error',
-        message: 'Please enter search request!',
-        position: 'topRight',
-      });
-      return;
-    }
     const response = await axios.get(URL, {
       params: {
         key: API_KEY,
@@ -26,7 +19,7 @@ export async function searchImages(searchrequest) {
         page: page,
       },
     });
-    page += 1;
+
     return response.data.hits;
   } catch (error) {
     console.error('REQUEST ERROR', error);

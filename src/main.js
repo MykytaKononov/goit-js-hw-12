@@ -33,6 +33,7 @@ async function handleSearch(event, shouldReset) {
       message: 'Please enter search request!',
       position: 'topRight',
     });
+    pagebutton.style.visibility = 'hidden';
     return;
   }
   if (shouldReset) {
@@ -58,25 +59,28 @@ async function handleSearch(event, shouldReset) {
     } else {
       displayImages(images);
       lightbox.refresh();
+      if (!shouldReset) {
+        setTimeout(() => {
+          const imagecard = document.querySelector('.image-card');
+          if (imagecard) {
+            const { height: cardHeight } = imagecard.getBoundingClientRect();
+            window.scrollBy({
+              top: cardHeight * 2,
+              behavior: 'smooth',
+            });
+          }
+        }, 100);
+      }
 
-      setTimeout(() => {
-        const imagecard = document.querySelector('.image-card');
-        if (imagecard) {
-          const { height: cardHeight } = imagecard.getBoundingClientRect();
-          window.scrollBy({
-            top: cardHeight * 2,
-            behavior: 'smooth',
-          });
-        }
-      }, 100);
-
-      if (getPage() >= maxpages) {
+      if (images.length < 15 || getPage() >= maxpages) {
         pagebutton.style.visibility = 'hidden';
         iziToast.warning({
           title: 'Warning',
           message: 'You have reached the last page!',
           position: 'topRight',
         });
+      } else {
+        pagebutton.style.visibility = 'visible';
       }
     }
   } catch (error) {
@@ -88,17 +92,12 @@ async function handleSearch(event, shouldReset) {
     });
   } finally {
     loader.style.visibility = 'hidden';
-    if (gallery.children.length > 0 && getPage() < maxpages) {
-      pagebutton.style.visibility = 'visible';
-    } else {
-      pagebutton.style.visibility = 'hidden';
-    }
   }
 }
 
 document.getElementById('form').addEventListener('submit', event => {
   handleSearch(event, true);
 });
-document.getElementById('page-button').addEventListener('click', event => {
+pagebutton.addEventListener('click', event => {
   handleSearch(event, false);
 });
